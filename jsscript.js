@@ -261,7 +261,14 @@ $('#bookForm').addEventListener('submit', e => {
 
 /* ---------- Music ---------- */
 const bgm = $('#bgm'), mBtn = $('#musicBtn');
-bgm.volume = .45;
+const vol = $('#vol');
+let savedVol = 20;                                   // صدای پیش‌فرض، از ۰ تا ۱۰۰
+try { savedVol = +(localStorage.getItem('hm_vol') ?? 20); } catch {}
+vol.value = savedVol; bgm.volume = savedVol / 100;
+vol.addEventListener('input', () => {
+  bgm.volume = vol.value / 100;
+  try { localStorage.setItem('hm_vol', vol.value); } catch {}
+});
 function setPlaying(on) { mBtn.classList.toggle('playing', on); }
 async function playMusic() { try { await bgm.play(); setPlaying(true); } catch { setPlaying(false); } }
 mBtn.onclick = () => { bgm.paused ? playMusic() : (bgm.pause(), setPlaying(false)); };
